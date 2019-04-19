@@ -36,6 +36,15 @@ public class StringFormaterTest {
                         format("abc").
                         format("efg").
                         toString());
+
+        stringFormater = new StringFormater("this is {} and {} and {}");
+        Assert.assertEquals(
+                "this is abc and efg and hij",
+                stringFormater.
+                        format("abc").
+                        format("efg").
+                        format("hij").
+                        toString());
     }
 
 }
