@@ -1,13 +1,13 @@
 /**
  *
  */
-public class StringFormater {
+public class StringFormatter {
     private static final String EMPTY_STRING = "";
     private static final String PLACE_HOLDER_EMPTY = "{}";
     private static final String PLACE_HOLDER_EMPTY_REX = "\\{}";
     private String str = EMPTY_STRING;
 
-    public StringFormater(String str) {
+    public StringFormatter(String str) {
         this.str = str;
     }
 
@@ -20,16 +20,16 @@ public class StringFormater {
      * replace each '{}' by arg
      * can be used like:
      * 1:
-     * new StringFormater("{}{}").format("123", "abc").toString(); //result is 123abc
+     * new StringFormatter("{}{}").format("123", "abc").toString(); //result is 123abc
      * 2:
-     * new StringFormater("{}{}").format("123").format("abc").toString(); //result is 123abc
+     * new StringFormatter("{}{}").format("123").format("abc").toString(); //result is 123abc
      * 3:
-     * new StringFormater("{}{}").format("123").toString(); //result is 123{}
+     * new StringFormatter("{}{}").format("123").toString(); //result is 123{}
      *
      * @param replacements The replacement sequence of char values
      * @return The resulting {@code String}
      */
-    public StringFormater format(CharSequence... replacements) {
+    public StringFormatter format(CharSequence... replacements) {
         if (str == null) {
             return this;
         }
