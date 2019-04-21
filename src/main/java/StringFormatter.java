@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  *
  */
@@ -30,11 +32,7 @@ public class StringFormatter {
      * @return The resulting {@code String}
      */
     public StringFormatter format(CharSequence... replacements) {
-        if (str == null) {
-            return this;
-        }
-
-        if (str.length() == 0) {
+        if (str == null || str.length() == 0) {
             return this;
         }
 
@@ -45,5 +43,38 @@ public class StringFormatter {
         }
 
         return this;
+    }
+
+    public StringFormatter format(String placeholder, String replacement) {
+        if (str == null || str.length() == 0) {
+            return this;
+        }
+
+        if (placeholder == null || placeholder.length() == 0) {
+            throw new RuntimeException("placeholder is empty (replacement: " + replacement + ")");
+        }
+
+        if (replacement == null) {
+            throw new RuntimeException("replacement is null (placeholder: " + placeholder + ")");
+        }
+
+        str = str.replace("{" + placeholder + "}", replacement);
+
+        return this;
+    }
+
+    public StringFormatter format(String placeholder, int replacement) {
+        return format(placeholder, Integer.toString(replacement));
+    }
+    public StringFormatter format(String placeholder, long replacement) {
+        return format(placeholder, Long.toString(replacement));
+    }
+
+    public StringFormatter format(String placeholder, double replacement) {
+        return format(placeholder, Double.toString(replacement));
+    }
+
+    public StringFormatter format(String placeholder, BigDecimal replacement) {
+        return format(placeholder, replacement.toString());
     }
 }
