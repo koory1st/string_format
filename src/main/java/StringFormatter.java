@@ -1,3 +1,4 @@
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -23,16 +24,16 @@ public class StringFormatter {
      * replace each '{}' by arg
      * can be used like:
      * 1:
-     * new StringFormatter("{}{}").format("123", "abc").toString(); //result is 123abc
+     * new StringFormatter("{}{}").formatString("123", "abc").toString(); //result is 123abc
      * 2:
-     * new StringFormatter("{}{}").format("123").format("abc").toString(); //result is 123abc
+     * new StringFormatter("{}{}").formatString("123").formatString("abc").toString(); //result is 123abc
      * 3:
-     * new StringFormatter("{}{}").format("123").toString(); //result is 123{}
+     * new StringFormatter("{}{}").formatString("123").toString(); //result is 123{}
      *
      * @param replacements The replacement sequence of char values
      * @return The resulting {@code String}
      */
-    public StringFormatter format(CharSequence... replacements) {
+    public StringFormatter formatString(CharSequence... replacements) {
         if (str == null || str.length() == 0) {
             return this;
         }
@@ -46,6 +47,15 @@ public class StringFormatter {
         return this;
     }
 
+    /**
+     * replace each '{placeholder}' by replacement
+     * can be used like:
+     * new StringFormatter("{name}{age}").format("name", "Levy").format("age", 40).toString()
+     *
+     * @param placeholder The placeholder's name, without "{}"
+     * @param replacement The replacement sequence of char values
+     * @return The resulting {@code String}
+     */
     public StringFormatter format(String placeholder, String replacement) {
         if (str == null || str.length() == 0) {
             return this;
@@ -80,6 +90,17 @@ public class StringFormatter {
         return format(placeholder, replacement.toString());
     }
 
+    /**
+     * replace each '{placeholder}' by replacement
+     * can be used like:
+     * Map<String, Object> replacement = new HashMap<>();
+     * replacement.put("name", "Levy");
+     * replacement.put("age", 40);
+     * new StringFormatter("{name}{age}").format(replacement).toString()
+     *
+     * @param replacementMap The key-value map, the key is the placeholder without "{}", the value is the replacement value
+     * @return The resulting {@code String}
+     */
     public StringFormatter format(Map<String, Object> replacementMap) {
         if (replacementMap == null) {
             return this;
@@ -93,6 +114,63 @@ public class StringFormatter {
                     value instanceof BigDecimal) {
                 str = format(entry.getKey(), String.valueOf(value)).toString();
             }
+        }
+
+        return this;
+    }
+
+    /**
+     * replace each '{placeholder}' by replacement
+     * can be used like:
+     * Student student = new Student();
+     * student.setName("Levy");
+     * student.setAge(40);
+     * new StringFormatter("{name}{age}").format(student).toString()
+     *
+     * @param replacement The instance, the property is the placeholder without "{}", the value is the replacement value
+     * @return The resulting {@code String}
+     */
+    public <T> StringFormatter format(T replacement) {
+        if (replacement == null) {
+            return this;
+        }
+
+        if (replacement.getClass().equals(String.class)) {
+            return formatString(String.valueOf(replacement));
+        }
+
+        Field[] fields = replacement.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (!field.getType().equals(String.class) &&
+                    !field.getType().equals(Integer.class) &&
+                    !field.getType().equals(int.class) &&
+                    !field.getGenericType().equals(Long.class) &&
+                    !field.getGenericType().equals(long.class) &&
+                    !field.getType().equals(Double.class) &&
+                    !field.getType().equals(double.class) &&
+                    !field.getType().equals(BigDecimal.class)) {
+                continue;
+            }
+
+            boolean accessible = field.isAccessible();
+            if (!accessible) {
+                field.setAccessible(true);
+            }
+
+            Object value;
+            try {
+                value = field.get(replacement);
+            } catch (IllegalAccessException ignored) {
+                continue;
+            } finally {
+                field.setAccessible(accessible);
+            }
+
+            if (value == null) {
+                continue;
+            }
+
+            str = format(field.getName(), String.valueOf(value)).toString();
         }
 
         return this;

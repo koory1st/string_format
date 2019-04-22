@@ -1,3 +1,5 @@
+import entity.Person;
+import entity.Student;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,32 +24,32 @@ public class StringFormatterTest {
         Assert.assertEquals(stringFormatter.toString(), "{}");
 
         stringFormatter = new StringFormatter("{}");
-        Assert.assertEquals(stringFormatter.format("123").toString(), "123");
+        Assert.assertEquals(stringFormatter.formatString("123").toString(), "123");
 
         stringFormatter = new StringFormatter("{}");
-        Assert.assertEquals(stringFormatter.format("123", "456").toString(), "123");
+        Assert.assertEquals(stringFormatter.formatString("123", "456").toString(), "123");
 
         stringFormatter = new StringFormatter("{}{}");
-        Assert.assertEquals(stringFormatter.format("123", "456").toString(), "123456");
+        Assert.assertEquals(stringFormatter.formatString("123", "456").toString(), "123456");
 
         stringFormatter = new StringFormatter("{}{}{}");
-        Assert.assertEquals(stringFormatter.format("abc", "efg").toString(), "abcefg{}");
+        Assert.assertEquals(stringFormatter.formatString("abc", "efg").toString(), "abcefg{}");
 
         stringFormatter = new StringFormatter("{}{}{}");
         Assert.assertEquals(
                 "abcefg{}",
                 stringFormatter.
-                        format("abc").
-                        format("efg").
+                        formatString("abc").
+                        formatString("efg").
                         toString());
 
         stringFormatter = new StringFormatter("this is {} and {} and {}");
         Assert.assertEquals(
                 "this is abc and efg and hij",
                 stringFormatter.
-                        format("abc").
-                        format("efg").
-                        format("hij").
+                        formatString("abc").
+                        formatString("efg").
+                        formatString("hij").
                         toString());
     }
 
@@ -148,4 +150,36 @@ public class StringFormatterTest {
                         format(replacement).toString());
     }
 
+    @Test
+    public void format4() {
+        StringFormatter stringFormatter = new StringFormatter("my name is {name}, and I'm {age} years old, and the number is {number}.");
+
+        Person person = new Person();
+        Assert.assertEquals(
+                "my name is {name}, and I'm {age} years old, and the number is {number}.",
+                stringFormatter.
+                        format(person).toString());
+
+        person.setName("Levy");
+        Assert.assertEquals(
+                "my name is Levy, and I'm {age} years old, and the number is {number}.",
+                stringFormatter.
+                        format(person).toString());
+
+        person.setName("Levy");
+        person.setAge(40);
+        Assert.assertEquals(
+                "my name is Levy, and I'm 40 years old, and the number is {number}.",
+                stringFormatter.
+                        format(person).toString());
+
+        Student student = new Student();
+        student.setName("Levy");
+        student.setAge(40);
+        student.setNumber(15L);
+        Assert.assertEquals(
+                "my name is Levy, and I'm 40 years old, and the number is 15.",
+                stringFormatter.
+                        format(student).toString());
+    }
 }
