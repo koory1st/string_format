@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  *
@@ -66,6 +67,7 @@ public class StringFormatter {
     public StringFormatter format(String placeholder, int replacement) {
         return format(placeholder, Integer.toString(replacement));
     }
+
     public StringFormatter format(String placeholder, long replacement) {
         return format(placeholder, Long.toString(replacement));
     }
@@ -76,5 +78,23 @@ public class StringFormatter {
 
     public StringFormatter format(String placeholder, BigDecimal replacement) {
         return format(placeholder, replacement.toString());
+    }
+
+    public StringFormatter format(Map<String, Object> replacementMap) {
+        if (replacementMap == null) {
+            return this;
+        }
+        for (Map.Entry<String, Object> entry : replacementMap.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String ||
+                    value instanceof Integer ||
+                    value instanceof Long ||
+                    value instanceof Double ||
+                    value instanceof BigDecimal) {
+                str = format(entry.getKey(), String.valueOf(value)).toString();
+            }
+        }
+
+        return this;
     }
 }

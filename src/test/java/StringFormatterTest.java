@@ -2,6 +2,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StringFormatterTest {
 
@@ -118,6 +120,32 @@ public class StringFormatterTest {
                 stringFormatter.
                         format("name", "Levy").
                         format("number", integer).toString());
+    }
+
+    @Test
+    public void format3() {
+        StringFormatter stringFormatter = new StringFormatter("my name is {name}, and the number is {number}.");
+
+        Map<String, Object> replacement = null;
+        Assert.assertEquals(
+                "my name is {name}, and the number is {number}.",
+                stringFormatter.
+                        format(replacement).toString());
+
+        replacement = new HashMap<>();
+        replacement.put("aaa", 123);
+        Assert.assertEquals(
+                "my name is {name}, and the number is {number}.",
+                stringFormatter.
+                        format(replacement).toString());
+
+        replacement = new HashMap<>();
+        replacement.put("name", "Levy");
+        replacement.put("number", 15);
+        Assert.assertEquals(
+                "my name is Levy, and the number is 15.",
+                stringFormatter.
+                        format(replacement).toString());
     }
 
 }
