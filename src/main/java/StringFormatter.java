@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  *
+ * @author koory1st
  */
 public class StringFormatter {
     private static final String EMPTY_STRING = "";
@@ -33,7 +34,7 @@ public class StringFormatter {
      * @param replacements The replacement sequence of char values
      * @return The resulting {@code String}
      */
-    public StringFormatter formatString(CharSequence... replacements) {
+    public StringFormatter formatString(String... replacements) {
         if (str == null || str.length() == 0) {
             return this;
         }
